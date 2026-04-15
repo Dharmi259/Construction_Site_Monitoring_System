@@ -1,0 +1,416 @@
+/* ============================= */
+/* GLOBAL STYLE */
+/* ============================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background: #0f172a;
+    color: white;
+    min-height: 100vh;
+}
+
+/* ============================= */
+/* CONTAINER */
+/* ============================= */
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* ============================= */
+/* CARD */
+/* ============================= */
+
+.card {
+    background: #1e293b;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+/* ============================= */
+/* TITLE */
+/* ============================= */
+
+.title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* ============================= */
+/* INPUT */
+/* ============================= */
+
+input, button, select {
+
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+input {
+    background: #334155;
+    color: white;
+}
+
+input::placeholder {
+    color: #cbd5e1;
+}
+
+/* ============================= */
+/* BUTTON */
+/* ============================= */
+
+button {
+    background: #3b82f6;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #2563eb;
+}
+
+/* ============================= */
+/* LINKS */
+/* ============================= */
+
+a {
+    color: #60a5fa;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ============================= */
+/* LOGIN BOX */
+/* ============================= */
+
+.auth-box {
+
+    width: 400px;
+    margin: 80px auto;
+}
+
+/* ============================= */
+/* FLASH MESSAGE */
+/* ============================= */
+
+.flash {
+
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.flash-success {
+    background: #16a34a;
+}
+
+.flash-danger {
+    background: #dc2626;
+}
+
+.flash-warning {
+    background: #f59e0b;
+}
+
+/* ============================= */
+/* NAVBAR */
+/* ============================= */
+
+.navbar {
+
+    background: #020617;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar h2 {
+    color: #3b82f6;
+}
+
+.nav-links a {
+
+    margin-left: 20px;
+    color: white;
+    font-weight: 500;
+}
+
+/* ============================= */
+/* DASHBOARD */
+/* ============================= */
+
+.dashboard {
+
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.stat-card {
+
+    background: #1e293b;
+    padding: 30px;
+    text-align: center;
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+.stat-card:hover {
+    transform: scale(1.05);
+}
+
+.stat-card h3 {
+
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.stat-card p {
+
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* ============================= */
+/* DETECTION PAGES */
+/* ============================= */
+
+.detect-box {
+
+    margin-top: 20px;
+}
+
+.video-frame {
+
+    margin-top: 20px;
+    width: 100%;
+    border-radius: 10px;
+}
+
+/* ============================= */
+/* BUTTON GROUP */
+/* ============================= */
+
+.btn-group {
+
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-group button {
+    flex: 1;
+}
+
+/* ============================= */
+/* DOWNLOAD BUTTON */
+/* ============================= */
+
+.download-btn {
+
+    margin-top: 20px;
+    background: #10b981;
+}
+
+.download-btn:hover {
+    background: #059669;
+}
+
+/* ============================= */
+/* RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 900px) {
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-box {
+        width: 90%;
+    }
+}
+
+
+
+
+
+.chart-container {
+    background: #1e1e2f;
+    padding: 20px;
+    margin-top: 25px;
+    border-radius: 12px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background: #111;
+    color: white;
+}
+
+.nav-right a {
+    margin-left: 20px;
+    color: white;
+    text-decoration: none;
+}
+
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.chart-box {
+    background: #1e1e2f;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0f172a;
+    color: white;
+}
+
+/* SIDEBAR */
+.sidebar {
+    position: fixed;
+    width: 220px;
+    height: 100%;
+    background: #111827;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+}
+
+.sidebar a {
+    display: block;
+    color: #ccc;
+    padding: 12px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    border-radius: 8px;
+}
+
+.sidebar a:hover {
+    background: #1f2937;
+    color: white;
+}
+
+/* MAIN */
+.main {
+    margin-left: 240px;
+}
+
+/* TOPBAR */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background: #111827;
+}
+
+.user {
+    font-weight: bold;
+}
+
+/* CONTENT */
+.container {
+    padding: 20px;
+}
+
+.dashboard {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 10px;
+    flex: 1;
+}
+
+/* CHARTS */
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.chart-box {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+
+
+
+
+
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-input {
+    width: 100%;
+    padding: 10px 42px 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: 0.3s;
+}
+
+.password-input:focus {
+    border-color: #4CAF50;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    display: flex;
+    align-items: center;
+}
+
+.eye-icon:hover {
+    color: #000;
+}

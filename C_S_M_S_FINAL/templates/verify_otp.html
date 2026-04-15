@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify OTP</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="auth-box">
+    <div class="card">
+
+        <div class="title">Enter OTP</div>
+
+        <!-- FLASH MESSAGE -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <form action="/verify_otp" method="POST">
+
+            <input type="hidden" name="email" value="{{ email }}">
+
+            <input type="text" name="otp" placeholder="Enter OTP" required>
+
+            <button type="submit">Verify OTP</button>
+
+        </form>
+
+    </div>
+</div>
+
+</body>
+</html>

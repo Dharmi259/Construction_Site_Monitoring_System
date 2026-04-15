@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSMS Image Detection</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+
+        <h2>CSMS Image Detection</h2>
+
+        <div class="nav-links">
+
+            <a href="/dashboard">Dashboard</a>
+            <a href="/image">Image Detection</a>
+            <a href="/video">Video Detection</a>
+            <a href="/webcam_page">Webcam Monitoring</a>
+            <a href="/download_report">Download Report</a>
+            <a href="/logout">Logout</a>
+
+        </div>
+
+    </div>
+
+    <!-- CONTAINER -->
+    <div class="container">
+
+        <div class="title">
+            Image Safety Detection
+        </div>
+
+        <!-- FLASH MESSAGE -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- UPLOAD CARD -->
+        <div class="card detect-box">
+
+            <form action="/predict_image" method="POST" enctype="multipart/form-data">
+
+                <input 
+                    type="file" 
+                    name="image"
+                    accept="image/*"
+                    required
+                >
+
+                <button type="submit">
+                    Upload & Detect
+                </button>
+
+            </form>
+
+        </div>
+
+        <!-- OUTPUT IMAGE -->
+        {% if image_path %}
+
+        <div class="card detect-box">
+
+            <div class="title">
+                Detection Result
+            </div>
+
+            <img 
+                src="{{ image_path }}" 
+                class="video-frame"
+            >
+
+        </div>
+
+        {% endif %}
+
+        {% if workers is defined %}
+
+        <div class="card" style="margin-top:20px; text-align:center;">
+
+            <h3>Detection Summary</h3>
+
+            <p>Total Workers: <b>{{ workers }}</b></p>
+            <p style="color:green;">Safe Workers: <b>{{ safe }}</b></p>
+            <p style="color:red;">Unsafe Workers: <b>{{ unsafe }}</b></p>
+
+        </div>
+
+        {% endif %}
+
+        <!-- BACK BUTTON -->
+        <div style="margin-top:20px;">
+
+            <button onclick="location.href='/dashboard'">
+                Back to Dashboard
+            </button>
+
+        </div>
+
+    </div>
+<!-- TOAST -->
+        <div id="toast" style="position: fixed; bottom: 20px; right: 20px; background: red; color: white; padding: 15px 20px; border-radius: 8px; display: none; font-weight: bold; z-index: 999;">
+        ⚠️ Unsafe worker detected
+        </div>
+
+        <script>
+        let alertPlaying = false;
+
+        function playVoiceAlert() {
+    const msg = new SpeechSynthesisUtterance("Unsafe worker detected");
+    window.speechSynthesis.speak(msg);
+}
+
+        function showToast() {
+            const toast = document.getElementById("toast");
+            toast.style.display = "block";
+            setTimeout(() => toast.style.display = "none", 3000);
+        }
+
+        function checkAlert() {
+            fetch("/dashboard_stats")
+            .then(res => res.json())
+            .then(data => {
+                if (data.unsafe > 0 && !alertPlaying) {
+                    alertPlaying = true;
+                    playVoiceAlert();
+                    showToast();
+                }else if (data.unsafe === 0) {
+                    alertPlaying = false;
+                }
+            });
+        }
+
+        setInterval(checkAlert, 1000);
+        </script>
+</body>
+</html>

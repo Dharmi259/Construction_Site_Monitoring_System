@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSMS Video Detection</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <script>
+        function startVideo() {
+            document.getElementById("videoForm").submit();
+        }
+
+        function stopVideo() {
+            fetch("/stop_video", { method: "POST" })
+            .then(() => {
+                location.reload();
+            });
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+
+        <h2>CSMS Video Detection</h2>
+
+        <div class="nav-links">
+
+            <a href="/dashboard">Dashboard</a>
+            <a href="/image">Image Detection</a>
+            <a href="/video">Video Detection</a>
+            <a href="/webcam_page">Webcam Monitoring</a>
+            <a href="/download_report">Download Report</a>
+            <a href="/logout">Logout</a>
+
+        </div>
+
+    </div>
+
+    <!-- CONTAINER -->
+    <div class="container">
+
+        <div class="title">
+            Video Safety Detection
+        </div>
+
+        <!-- FLASH MESSAGE -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- UPLOAD VIDEO -->
+        <div class="card detect-box">
+
+            <form 
+                id="videoForm"
+                action="/start_video"
+                method="POST"
+                enctype="multipart/form-data"
+            >
+
+                <input 
+                    type="file" 
+                    name="video"
+                    accept="video/*"
+                    required
+                >
+
+                <div class="btn-group">
+
+                    <button type="submit">
+                        Start Analysis
+                    </button>
+
+                    <button 
+                        type="button"
+                        onclick="stopVideo()"
+                    >
+                        Stop
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <!-- VIDEO STREAM -->
+        <div class="card detect-box">
+
+            <div class="title">
+                Live Detection
+            </div>
+
+            <img 
+                src="/video_stream"
+                class="video-frame"
+            >
+
+        </div>
+
+        <div class="card" style="margin-top:20px; text-align:center;">
+
+            <h3>Live Detection Stats</h3>
+
+            <p>Total Workers: <b id="workers">0</b></p>
+            <p style="color:green;">Safe Workers: <b id="safe">0</b></p>
+            <p style="color:red;">Unsafe Workers: <b id="unsafe">0</b></p>
+
+        </div>
+        <script>
+        let alertPlaying = false;
+
+        function playVoiceAlert() {
+            const msg = new SpeechSynthesisUtterance("Unsafe worker detected");
+            window.speechSynthesis.speak(msg);
+        }
+
+        function showToast() {
+            const toast = document.getElementById("toast");
+            toast.style.display = "block";
+            setTimeout(() => toast.style.display = "none", 3000);
+        }
+
+        function updateStats() {
+            fetch("/dashboard_stats")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("workers").innerText = data.workers;
+                document.getElementById("safe").innerText = data.safe;
+                document.getElementById("unsafe").innerText = data.unsafe;
+
+                // 🚨 ALERT
+                if (data.unsafe > 0 && !alertPlaying) {
+                    alertPlaying = true;
+                    playVoiceAlert();
+                    showToast();
+                } else if (data.unsafe === 0) {
+                    alertPlaying = false;
+                }
+            });
+        }
+
+        setInterval(updateStats, 1000);
+        </script>
+
+        <!-- TOAST -->
+        <div id="toast" style="position: fixed; bottom: 20px; right: 20px; background: red; color: white; padding: 15px 20px; border-radius: 8px; display: none; font-weight: bold; z-index: 999;">
+            ⚠️ Unsafe worker detected
+        </div>
+    
+        <!-- BACK BUTTON -->
+        <div style="margin-top:20px;">
+
+            <button onclick="location.href='/dashboard'">
+                Back to Dashboard
+            </button>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

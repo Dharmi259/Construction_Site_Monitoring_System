@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSMS Login</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <h2>CSMS</h2>
+        <div class="nav-links">
+            <a href="/">Login</a>
+            <a href="/signup">Signup</a>
+        </div>
+    </div>
+
+    <!-- LOGIN BOX -->
+    <div class="auth-box">
+
+        <div class="card">
+
+            <div class="title">
+                Construction Safety Monitoring System
+            </div>
+
+            <!-- FLASH MESSAGE -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- LOGIN FORM -->
+            <form action="/login" method="POST">
+
+                <input 
+                    type="text" 
+                    name="username" 
+                    placeholder="Enter Username"
+                    required
+                >
+
+                <div class="password-wrapper">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="password-input"
+                        placeholder="Enter password"
+                        required
+                    >
+
+                    <span class="eye-icon" onclick="togglePassword('password', this)">
+                        <!-- Eye SVG -->
+                        <svg viewBox="0 0 24 24" width="20" height="20" class="eye-open">
+                            <path fill="currentColor"
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+                        </svg>
+
+                        <!-- Eye Closed SVG -->
+                        <svg viewBox="0 0 24 24" width="20" height="20" class="eye-close" style="display:none;">
+                            <path fill="currentColor"
+                                d="M12 6a9.77 9.77 0 0 1 8.94 6 9.77 9.77 0 0 1-1.73 2.81l1.42 1.42A11.94 11.94 0 0 0 23 12c-1.73-4.39-6-7.5-11-7.5-1.61 0-3.14.31-4.54.87l1.57 1.57A7.96 7.96 0 0 1 12 6zm-9.19-.19L1.39 7.22l3.05 3.05A11.94 11.94 0 0 0 1 12c1.73 4.39 6 7.5 11 7.5 2.08 0 4.03-.5 5.74-1.38l3.04 3.04 1.41-1.41L2.81 5.81zM12 17a5 5 0 0 1-5-5c0-.73.16-1.42.44-2.05l6.61 6.61c-.63.28-1.32.44-2.05.44z"/>
+                        </svg>
+                    </span>
+                </div>
+
+                <button type="submit">
+                    Login
+                </button>
+                <script>
+function togglePassword(id, el) {
+
+    const input = document.getElementById(id);
+    const openIcon = el.querySelector(".eye-open");
+    const closeIcon = el.querySelector(".eye-close");
+
+    if (input.type === "password") {
+        input.type = "text";
+        openIcon.style.display = "none";
+        closeIcon.style.display = "block";
+    } else {
+        input.type = "password";
+        openIcon.style.display = "block";
+        closeIcon.style.display = "none";
+    }
+}
+</script>
+
+            </form>
+
+            <!-- LINKS -->
+            <div style="margin-top:15px; text-align:center;">
+
+                <p>
+                    Don't have an account?
+                    <a href="/signup">Signup</a>
+                </p>
+
+                <p style="margin-top:10px;">
+                    <a href="/forget_password">
+                        Forgot Password?
+                    </a>
+                </p>
+
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

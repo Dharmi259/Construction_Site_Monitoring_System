@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSMS Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>CSMS</h2>
+
+    <a href="/dashboard">Dashboard</a>
+    <a href="/image">Image Detection</a>
+    <a href="/video">Video Detection</a>
+    <a href="/webcam_page">Webcam Monitoring</a>
+    <a href="/download_report">Download Report</a>
+    <a href="/logout">Logout</a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div></div>
+
+        <div class="user-menu" style="position: relative;">
+
+            👤 {{ session['user'] }}
+
+            <!-- 3 DOT -->
+            <span onclick="toggleMenu()" style="
+                cursor:pointer;
+                margin-left:10px;
+                font-size:18px;
+                color:#e2e8f0;
+            ">
+                ⋮
+            </span>
+
+            <!-- DROPDOWN -->
+            <div id="dropdown" style="
+                display:none;
+                position:absolute;
+                right:0;
+                top:35px;
+                background:#1e293b;
+                border:1px solid #334155;
+                border-radius:10px;
+                padding:8px 0;
+                min-width:180px;
+                z-index:1000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            ">
+
+                <div onclick="resetDashboard()" style="
+                    padding:10px 15px;
+                    cursor:pointer;
+                    color:#e2e8f0;
+                    font-size:14px;
+                "
+                onmouseover="this.style.background='#334155'"
+                onmouseout="this.style.background='transparent'">
+                    🔄 Reset Dashboard
+                </div>
+
+                <div onclick="downloadPieChart()" style="
+                    padding:10px 15px;
+                    cursor:pointer;
+                    color:#e2e8f0;
+                    font-size:14px;
+                "
+                onmouseover="this.style.background='#334155'"
+                onmouseout="this.style.background='transparent'">
+                    📥 Download Chart
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="title">Safety Analytics Dashboard</div>
+
+        <!-- STATS -->
+        <div class="dashboard">
+            <div class="stat-card">
+                <h3>Total Workers</h3>
+                <p id="workers">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Safe Workers</h3>
+                <p id="safe">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Unsafe Workers</h3>
+                <p id="unsafe">0</p>
+            </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>Daily Trend</h3>
+                <canvas id="dailyChart"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3>Monthly Summary</h3>
+                <canvas id="monthlyChart"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3>Safety Distribution</h3>
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: red;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    display: none;
+    font-weight: bold;
+    z-index: 999;
+">
+    ⚠️ Unsafe worker detected
+</div>
+
+<script>
+
+let alertPlaying = false;
+
+let dailyChart, monthlyChart, pieChart;
+let timeLabels = [];
+let safeData = [];
+let unsafeData = [];
+
+// =====================
+// CHART INIT
+// =====================
+function initCharts() {
+
+    dailyChart = new Chart(document.getElementById("dailyChart"), {
+        type: "line",
+        data: {
+            labels: timeLabels,
+            datasets: [
+                { label: "Safe", data: safeData, borderColor: "green" },
+                { label: "Unsafe", data: unsafeData, borderColor: "red" }
+            ]
+        }
+    });
+
+    monthlyChart = new Chart(document.getElementById("monthlyChart"), {
+        type: "bar",
+        data: {
+            labels: [],
+            datasets: [
+                { label: "Safe", data: [], backgroundColor: "green" },
+                { label: "Unsafe", data: [], backgroundColor: "red" }
+            ]
+        }
+    });
+
+    pieChart = new Chart(document.getElementById("pieChart"), {
+        type: "doughnut",
+        data: {
+            labels: ["Safe", "Unsafe"],
+            datasets: [{
+                data: [0, 0],
+                backgroundColor: ["green", "red"]
+            }]
+        }
+    });
+}
+
+// =====================
+// DASHBOARD UPDATE + ALERT
+// =====================
+function updateDashboard() {
+
+    fetch('/chart_data')
+    .then(res => res.json())
+    .then(data => {
+
+        document.getElementById("workers").innerText = data.workers;
+        document.getElementById("safe").innerText = data.safe;
+        document.getElementById("unsafe").innerText = data.unsafe;
+
+        timeLabels.push(data.time);
+        safeData.push(data.safe);
+        unsafeData.push(data.unsafe);
+
+        if (timeLabels.length > 10) {
+            timeLabels.shift();
+            safeData.shift();
+            unsafeData.shift();
+        }
+
+        dailyChart.update();
+
+        pieChart.data.datasets[0].data = [data.safe, data.unsafe];
+        pieChart.update();
+
+        // 🚨 ALERT
+        if (data.unsafe > 0 && !alertPlaying) {
+            alertPlaying = true;
+            playVoiceAlert();
+            showToast();
+        } else if (data.unsafe === 0) {
+            alertPlaying = false;
+        }
+    });
+}
+
+// =====================
+// MONTHLY
+// =====================
+function loadMonthly() {
+    fetch("/monthly_data")
+    .then(res => res.json())
+    .then(data => {
+        monthlyChart.data.labels = data.labels;
+        monthlyChart.data.datasets[0].data = data.safe;
+        monthlyChart.data.datasets[1].data = data.unsafe;
+        monthlyChart.update();
+    });
+}
+
+// =====================
+// ALERT FUNCTIONS
+// =====================
+function playVoiceAlert() {
+    const msg = new SpeechSynthesisUtterance("Unsafe worker detected");
+    window.speechSynthesis.speak(msg);
+}
+
+function showToast() {
+    const toast = document.getElementById("toast");
+    toast.style.display = "block";
+    setTimeout(() => toast.style.display = "none", 3000);
+}
+
+// =====================
+// DROPDOWN
+// =====================
+function toggleMenu() {
+    const menu = document.getElementById("dropdown");
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+
+window.addEventListener("click", function(e) {
+    const menu = document.getElementById("dropdown");
+    const button = e.target.closest(".user-menu");
+
+    if (!button) {
+        menu.style.display = "none";
+    }
+});
+
+// =====================
+// ACTIONS
+// =====================
+function resetDashboard() {
+    fetch("/reset_dashboard", { method: "POST" })
+    .then(() => alert("Dashboard reset successful"));
+}
+
+function downloadPieChart() {
+    const link = document.createElement('a');
+    link.href = pieChart.toBase64Image();
+    link.download = "pie_chart.png";
+    link.click();
+}
+
+// =====================
+window.onload = () => {
+    initCharts();
+    setInterval(updateDashboard, 1000);
+    loadMonthly();
+};
+
+</script>
+
+</body>
+</html>

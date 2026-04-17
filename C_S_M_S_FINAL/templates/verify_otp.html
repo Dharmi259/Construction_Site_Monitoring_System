@@ -1,38 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Verify OTP</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSMS Verify OTP</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+<body class="auth-page">
 
-<body>
-
-<div class="auth-box">
-    <div class="card">
-
-        <div class="title">Enter OTP</div>
-
-        <!-- FLASH MESSAGE -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% for category, message in messages %}
-                <div class="flash flash-{{ category }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endwith %}
-
-        <form action="/verify_otp" method="POST">
-
-            <input type="hidden" name="email" value="{{ email }}">
-
-            <input type="text" name="otp" placeholder="Enter OTP" required>
-
-            <button type="submit">Verify OTP</button>
-
-        </form>
-
+    <div class="auth-navbar">
+        <div class="auth-logo">Construction Site Monitoring System for Worker Safety Using AI</div>
+        <div class="auth-nav-links">
+            <a href="/">Login</a>
+            <a href="/signup">Signup</a>
+        </div>
     </div>
-</div>
+
+    <div class="auth-wrapper">
+        <div class="auth-card">
+
+            <h1>Verify OTP</h1>
+            <p class="auth-subtitle">Enter the OTP sent to your registered email address to continue password reset.</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="/verify_otp" method="POST" class="auth-form">
+
+                <input type="hidden" name="email" value="{{ email }}">
+
+                <div class="form-group">
+                    <label>OTP</label>
+                    <input type="text" name="otp" placeholder="Enter 4-digit OTP" maxlength="4" required>
+                </div>
+
+                <button type="submit" class="auth-btn">Verify OTP</button>
+            </form>
+
+            <div class="auth-footer-links">
+                <p>Back to <a href="/">Login</a></p>
+                <a href="/forget_password">Resend OTP</a>
+            </div>
+
+        </div>
+    </div>
 
 </body>
 </html>

@@ -1,33 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSMS Signup</title>
-
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
 </head>
+<body class="auth-page">
 
-<body>
-
-    <!-- NAVBAR -->
-    <div class="navbar">
-        <h2>CSMS</h2>
-        <div class="nav-links">
+    <div class="auth-navbar">
+        <div class="auth-logo">Construction Site Monitoring System for Worker Safety Using AI</div>
+        <div class="auth-nav-links">
             <a href="/">Login</a>
-            <a href="/signup">Signup</a>
+            <a href="/signup" class="active">Signup</a>
         </div>
     </div>
 
-    <!-- SIGNUP BOX -->
-    <div class="auth-box">
+    <div class="auth-wrapper">
+        <div class="auth-card">
 
-        <div class="card">
+            <h1>Create Your Account</h1>
+            <p class="auth-subtitle">Sign up to access construction safety monitoring, PPE detection, and analytics dashboard.</p>
 
-            <div class="title">
-                Create New Account
-            </div>
-
-            <!-- FLASH MESSAGE -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
@@ -38,82 +32,42 @@
                 {% endif %}
             {% endwith %}
 
-            <!-- SIGNUP FORM -->
-            <form action="/signup" method="POST">
+            <form action="/signup" method="POST" class="auth-form">
 
-                <input 
-                    type="text" 
-                    name="username"
-                    placeholder="Enter Username"
-                    required
-                >
-
-                <input 
-                    type="email" 
-                    name="email"
-                    placeholder="Enter Email"
-                    required
-                >
-
-                <div class="password-wrapper">
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        class="password-input"
-                        placeholder="Enter password"
-                        required
-                    >
-
-                    <span class="eye-icon" onclick="togglePassword('password', this)">
-                        <!-- Eye SVG -->
-                        <svg viewBox="0 0 24 24" width="20" height="20" class="eye-open">
-                            <path fill="currentColor"
-                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
-                        </svg>
-
-                    <!-- Eye Closed SVG -->
-                        <svg viewBox="0 0 24 24" width="20" height="20" class="eye-close" style="display:none;">
-                            <path fill="currentColor"
-                                d="M12 6a9.77 9.77 0 0 1 8.94 6 9.77 9.77 0 0 1-1.73 2.81l1.42 1.42A11.94 11.94 0 0 0 23 12c-1.73-4.39-6-7.5-11-7.5-1.61 0-3.14.31-4.54.87l1.57 1.57A7.96 7.96 0 0 1 12 6zm-9.19-.19L1.39 7.22l3.05 3.05A11.94 11.94 0 0 0 1 12c1.73 4.39 6 7.5 11 7.5 2.08 0 4.03-.5 5.74-1.38l3.04 3.04 1.41-1.41L2.81 5.81zM12 17a5 5 0 0 1-5-5c0-.73.16-1.42.44-2.05l6.61 6.61c-.63.28-1.32.44-2.05.44z"/>
-                        </svg>
-                    </span>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Enter username" required>
                 </div>
-                <button type="submit">
-                    Signup
-                </button>
-                <script>
-function togglePassword(id, el) {
 
-    const input = document.getElementById(id);
-    const openIcon = el.querySelector(".eye-open");
-    const closeIcon = el.querySelector(".eye-close");
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="Enter email address" required>
+                </div>
 
-    if (input.type === "password") {
-        input.type = "text";
-        openIcon.style.display = "none";
-        closeIcon.style.display = "block";
-    } else {
-        input.type = "password";
-        openIcon.style.display = "block";
-        closeIcon.style.display = "none";
-    }
-}
-</script>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="password-wrap">
+                        <input type="password" name="password" id="password" placeholder="Create password" required>
+                        <button type="button" class="eye-btn" onclick="togglePassword('password')">👁</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn">Signup</button>
             </form>
 
-            <!-- LINKS -->
-            <div style="margin-top:15px; text-align:center;">
-
-                <p>
-                    Already have an account?
-                    <a href="/">Login</a>
-                </p>
-
+            <div class="auth-footer-links">
+                <p>Already have an account? <a href="/">Login</a></p>
             </div>
 
         </div>
     </div>
+
+<script>
+function togglePassword(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
+}
+</script>
 
 </body>
 </html>

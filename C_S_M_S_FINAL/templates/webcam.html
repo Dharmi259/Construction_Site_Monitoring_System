@@ -25,32 +25,21 @@
 
 <body>
 
-    <!-- NAVBAR -->
-    <div class="navbar">
-
-        <h2>CSMS Webcam Monitoring</h2>
-
-        <div class="nav-links">
-
-            <a href="/dashboard">Dashboard</a>
-            <a href="/image">Image Detection</a>
-            <a href="/video">Video Detection</a>
-            <a href="/webcam_page">Webcam Monitoring</a>
-            <a href="/download_report">Download Report</a>
-            <a href="/logout">Logout</a>
-
-        </div>
-
+    <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/image">Image Detection</a>
+        <a href="/video">Video Detection</a>
+        <a href="/webcam_page" class="active">Webcam Monitoring</a>
+        <a href="/download_report">Download Report</a>
+        <a href="/logout">Logout</a>
     </div>
 
-    <!-- CONTAINER -->
     <div class="container">
 
         <div class="title">
             Live Webcam Safety Monitoring
         </div>
 
-        <!-- FLASH MESSAGE -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -61,49 +50,28 @@
             {% endif %}
         {% endwith %}
 
-        <!-- CONTROL CARD -->
         <div class="card detect-box">
-
             <div class="btn-group">
-
-                <button onclick="startWebcam()">
-                    Start Webcam
-                </button>
-
-                <button onclick="stopWebcam()">
-                    Stop Webcam
-                </button>
-
+                <button onclick="startWebcam()">Start Webcam</button>
+                <button onclick="stopWebcam()">Stop Webcam</button>
             </div>
-
         </div>
 
-        <!-- WEBCAM STREAM -->
         <div class="card detect-box">
-
-            <div class="title">
-                Live Detection
-            </div>
-
-            <img 
-                src="/webcam"
-                class="video-frame"
-            >
-
+            <div class="title">Live Detection</div>
+            <img src="/webcam" class="video-frame">
         </div>
 
         <div class="card" style="margin-top:20px; text-align:center;">
-
             <h3>Live Detection Stats</h3>
-
             <p>Total Workers: <b id="workers">0</b></p>
             <p style="color:green;">Safe Workers: <b id="safe">0</b></p>
             <p style="color:red;">Unsafe Workers: <b id="unsafe">0</b></p>
-
         </div>
 
         <script>
         let alertPlaying = false;
+        let previousUnsafe = 0;
 
         function playVoiceAlert() {
             const msg = new SpeechSynthesisUtterance("Unsafe worker detected");
@@ -124,32 +92,34 @@
                 document.getElementById("safe").innerText = data.safe;
                 document.getElementById("unsafe").innerText = data.unsafe;
 
-                // 🚨 ALERT
-                if (data.unsafe > 0 && !alertPlaying) {
-                    alertPlaying = true;
-                    playVoiceAlert();
-                    showToast();
-                } else if (data.unsafe === 0) {
+                if (data.webcam_running) {
+                    if (data.unsafe > previousUnsafe && !alertPlaying) {
+                        alertPlaying = true;
+                        playVoiceAlert();
+                        showToast();
+
+                        setTimeout(() => {
+                            alertPlaying = false;
+                        }, 3000);
+                    }
+                } else {
                     alertPlaying = false;
                 }
+
+                previousUnsafe = data.unsafe;
             });
         }
 
         setInterval(updateStats, 1000);
+        updateStats();
         </script>
 
-        <!-- TOAST -->
         <div id="toast" style="position: fixed; bottom: 20px; right: 20px; background: red; color: white; padding: 15px 20px; border-radius: 8px; display: none; font-weight: bold; z-index: 999;">
             ⚠️ Unsafe worker detected
         </div>
 
-        <!-- BACK BUTTON -->
         <div style="margin-top:20px;">
-
-            <button onclick="location.href='/dashboard'">
-                Back to Dashboard
-            </button>
-
+            <button onclick="location.href='/dashboard'">Back to Dashboard</button>
         </div>
 
     </div>
